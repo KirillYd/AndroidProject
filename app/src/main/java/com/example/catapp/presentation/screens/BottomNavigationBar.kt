@@ -11,11 +11,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.catapp.R
-import com.example.catapp.presentation.screens.NavElement
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
 
 val navigationItems = listOf(
     NavElement("Home", "home", R.drawable.home),
