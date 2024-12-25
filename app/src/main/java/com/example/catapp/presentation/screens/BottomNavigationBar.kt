@@ -22,7 +22,11 @@ val navigationItems = listOf(
 )
 
 @Composable
-fun BottomNavigationBar(controller: NavHostController, currentRoute: String, onRouteChange: (String) -> Unit) {
+fun BottomNavigationBar(
+    controller: NavHostController,
+    currentRoute: String?,
+    onRouteChange: (String) -> Unit
+) {
     BottomNavigation(
         contentColor = Color.Black,
         backgroundColor = Color.LightGray,
@@ -31,16 +35,23 @@ fun BottomNavigationBar(controller: NavHostController, currentRoute: String, onR
         navigationItems.forEach { item ->
             BottomNavigationItem(
                 selected = currentRoute == item.route,
-                icon = { Icon(painter = painterResource(id = item.resource), contentDescription = item.name) },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.resource),
+                        contentDescription = item.name,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
                 label = { Text(item.name) },
-                modifier = Modifier.size(32.dp).padding(top = 3.dp),
                 onClick = {
-                    controller.navigate(item.route) {
-                        popUpTo(controller.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
+                    if (currentRoute != item.route) {
+                        controller.navigate(item.route) {
+                            popUpTo(controller.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                        onRouteChange(item.route)
                     }
-                    onRouteChange(item.route)
                 }
             )
         }

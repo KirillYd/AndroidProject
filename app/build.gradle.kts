@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -50,6 +52,10 @@ android {
     }
 }
 
+kapt{
+    correctErrorTypes = true
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -64,8 +70,17 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.modo.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation("androidx.compose.material:material:1.7.6")
+    implementation(libs.androidx.material)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.okhttp3.okhttp)
+    implementation(libs.logging.interceptor)
     //implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:8.0.2")
     //implementation("io.coil-kt:coil:2.0.0")
     testImplementation(libs.junit)

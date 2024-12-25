@@ -26,6 +26,6 @@ class PictureRepository {
                 1100, "1980", "https://images.metmuseum.org/CRDImages/ad/original/DP206754.jpg", "Bottle", "American"
             ),
 
-        )
+            )
     }
 }

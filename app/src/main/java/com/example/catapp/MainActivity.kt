@@ -37,12 +37,15 @@ import com.example.catapp.presentation.screens.PictureDetailsScreen
 import com.example.catapp.presentation.screens.PictureListScreen
 import com.example.catapp.presentation.screens.navigationItems
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.catapp.ui.theme.CatappTheme
 import com.github.terrakok.modo.Modo.rememberRootScreen
 import com.github.terrakok.modo.RootScreen
 import com.github.terrakok.modo.stack.DefaultStackScreen
 import com.github.terrakok.modo.stack.StackNavModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,24 +58,23 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val controller = rememberNavController()
-    var currentRoute by remember { mutableStateOf("home") }
+    val navBackStackEntry by controller.currentBackStackEntryAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 title = {
-                    if (currentRoute == "list") {
-                        Text("Картины")
-                    } else {
-                        Text("")
-                    }
+                    Text(text = when (navBackStackEntry?.destination?.route) {
+                        "list" -> "Картины"
+                        else -> ""
+                    })
                 },
                 navigationIcon = {
-                    if (currentRoute.startsWith("element/")) {
+                    if (navBackStackEntry?.destination?.route?.startsWith("element/") == true) {
                         IconButton(onClick = { controller.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -83,25 +85,19 @@ fun MainScreen() {
                 }
             )
         },
-
-        bottomBar = { BottomNavigationBar(controller, currentRoute) { currentRoute = it } }
+        bottomBar = {
+            val currentRoute = navBackStackEntry?.destination?.route
+            BottomNavigationBar(controller, currentRoute ?: "") { newRoute ->
+                controller.navigate(newRoute)
+            }
+        }
     ) { innerPadding ->
         NavHost(navController = controller, startDestination = navigationItems.first().route) {
-            composable("home") {
-                currentRoute = "home"
-                MainTabScreen()
-            }
-            composable("notification") {
-                currentRoute = "notification"
-                NotificationScreen()
-            }
-            composable("list") {
-                currentRoute = "list"
-                PictureListScreen(controller)
-            }
+            composable("home") { MainTabScreen() }
+            composable("notification") { NotificationScreen() }
+            composable("list") { PictureListScreen { id -> controller.navigate("element/$id") } }
             composable("element/{elementId}") { backStackEntry ->
                 val elementId = backStackEntry.arguments?.getString("elementId")?.toInt() ?: 0
-                currentRoute = "element/$elementId"
                 PictureDetailsScreen(controller, elementId)
             }
         }
@@ -113,3 +109,4 @@ fun MainScreen() {
 fun GreetingPreview() {
     MainScreen()
 }
+

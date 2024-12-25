@@ -1,6 +1,11 @@
 package com.example.catapp.model
 
-data class Picture(
+data class PictureResponse(
+    val total: Int,
+    val objectIDs: List<Int>
+)
+
+data class ObjectDetails(
     val objectID: Int,
     val accessionYear: String,
     val primaryImage: String,
